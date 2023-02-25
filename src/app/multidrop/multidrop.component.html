@@ -1,0 +1,26 @@
+<div>
+  <h3>Selected</h3>
+
+  <ul>
+    <li *ngFor="let item of selected">Id: {{item.id}} -> name {{item.name}}
+      <button mat-mini-fab (click)="removeItem(item)" color="primary" aria-label="Example icon button with a menu icon">
+        <mat-icon>remove</mat-icon>
+      </button>
+    </li>
+  </ul>
+
+</div>
+<mat-form-field class="example-full-width" appearance="fill">
+  <mat-label>Assignee</mat-label>
+  <input type="text" matInput [formControl]="myControl" [matAutocomplete]="auto">
+  <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+    <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+      {{option.name}}
+    </mat-option>
+  </mat-autocomplete>
+
+
+</mat-form-field>
+<button mat-mini-fab (click)="addItem()" color="primary" aria-label="Example icon button with a menu icon">
+  <mat-icon>add</mat-icon>
+</button>

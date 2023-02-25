@@ -1,0 +1,38 @@
+<h1>{{gig.name}}</h1>
+
+
+<form class="example-form">
+    <mat-form-field class="example-full-width">
+        <mat-label>Name</mat-label>
+        <input matInput [value]="gig.name">
+    </mat-form-field>
+
+    <h2>Date</h2>
+    <mat-form-field appearance="fill">
+        <mat-label>Date</mat-label>
+        <input matInput [matDatepicker]="dp" [formControl]="date">
+        <mat-hint>MMMM DD, YYYY</mat-hint>
+        <mat-datepicker-toggle matIconSuffix [for]="dp"></mat-datepicker-toggle>
+        <mat-datepicker #dp></mat-datepicker>
+    </mat-form-field>
+
+    <div>
+        <h2>Artist</h2>
+        <app-multidrop type="artists" [selected]="artists"></app-multidrop>
+    </div>
+
+    <h2>Venue</h2>
+    <div>
+        <mat-form-field appearance="fill">
+            <mat-label>Venue</mat-label>
+            <mat-select [(value)]="gig.venue">
+                <mat-option [value]="option.id" *ngFor="let option of venues">{{ option.name }}</mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+    <div>
+        <button mat-fab (click)="saveGig()" color="primary" aria-label="Example icon button with a menu icon">
+            <mat-icon>save</mat-icon>
+        </button>
+    </div>
+</form>
