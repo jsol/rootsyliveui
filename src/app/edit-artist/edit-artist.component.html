@@ -1,0 +1,16 @@
+<h1 mat-dialog-title>{{artist.name}}</h1>
+
+<div mat-dialog-content>
+    <form class="example-form">
+        <mat-form-field class="example-full-width">
+            <mat-label>Name</mat-label>
+            <input matInput [(ngModel)]="artist.name" name="name">
+        </mat-form-field>
+
+    </form>
+</div>
+<div>
+    <button mat-fab (click)="saveArtist()" color="primary" aria-label="Example icon button with a menu icon">
+        <mat-icon>save</mat-icon>
+    </button>
+</div>

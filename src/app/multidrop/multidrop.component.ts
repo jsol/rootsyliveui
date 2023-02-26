@@ -12,7 +12,7 @@ import { WebsocketService, Identifier } from "../websocket.service";
 })
 export class MultidropComponent implements OnInit {
   myControl = new FormControl<string | Identifier>('');
-  options: Identifier[] = [{ id: '1', name: 'Mary' }, { id: '2', name: 'Shelley' }, { id: '3', name: 'Igor' }];
+  options: Identifier[] = [];
   filteredOptions!: Observable<Identifier[]>;
   @Input() selected = new Set<Identifier>();
   @Input() type: string = 'artists';

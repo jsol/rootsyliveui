@@ -18,8 +18,12 @@ import { GigListComponent } from './gig-list/gig-list.component';
 import { MatTableModule } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatTabsModule } from '@angular/material/tabs';
 import { EditGigDialogComponent } from './edit-gig-dialog/edit-gig-dialog.component';
 import { WebsocketService } from "./websocket.service";
+import { ArtistListComponent } from './artist-list/artist-list.component';
+import { EditArtistComponent } from './edit-artist/edit-artist.component';
+import { EditArtistDialogComponent } from './edit-artist-dialog/edit-artist-dialog.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +31,10 @@ import { WebsocketService } from "./websocket.service";
     MultidropComponent,
     EditgigComponent,
     GigListComponent,
-    EditGigDialogComponent
+    EditGigDialogComponent,
+    ArtistListComponent,
+    EditArtistComponent,
+    EditArtistDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -44,7 +51,8 @@ import { WebsocketService } from "./websocket.service";
     MatDatepickerModule,
     MatTableModule,
     MatSortModule,
-    MatDialogModule
+    MatDialogModule,
+    MatTabsModule
   ],
   providers: [WebsocketService],
   bootstrap: [AppComponent]
