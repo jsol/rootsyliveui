@@ -1,5 +1,6 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, Inject, OnInit } from '@angular/core';
 import { Artist, Gig, Venue, Identifier, Message, WebsocketService } from "../websocket.service";
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 import { FormControl } from '@angular/forms';
 import { MAT_MOMENT_DATE_FORMATS, MomentDateAdapter } from '@angular/material-moment-adapter';
@@ -12,6 +13,10 @@ import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/materia
 import * as _moment from 'moment';
 // tslint:disable-next-line:no-duplicate-imports
 import { default as _rollupMoment } from 'moment';
+
+export interface EditData {
+  id: string;
+}
 
 const moment = _rollupMoment || _moment;
 export const MY_FORMATS = {
@@ -39,29 +44,30 @@ export const MY_FORMATS = {
     { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
   ],
 })
-export class EditgigComponent {
+export class EditgigComponent implements OnInit {
   gig: Gig = {
-    id: "gig-id",
-    name: "Test gig",
-    venue: "uuid6",
-    date: "2023-05-24",
-    artists: ["uuid1"]
+    id: "",
+    name: "New gig",
+    venue: "",
+    date: "",
+    artists: []
   }
   date = new FormControl(moment(this.gig.date));
   venue = new FormControl<string | Identifier>('');
   artists = new Set<Identifier>();
   venues: Venue[] = []
   selectedVenue: string = ''
+  id: string = ''
 
-  constructor(private WebsocketService: WebsocketService) {
-    this.venue.setValue(this.gig.venue)
-    this.gig.artists.forEach((id:string) => {
-      this.artists.add(this.WebsocketService.cache.artists.get(id)!)
-    })
+  constructor(@Inject(MAT_DIALOG_DATA) public data: EditData, private WebsocketService: WebsocketService) {
+    this.id = data.id
+    this.WebsocketService = WebsocketService
 
-    WebsocketService.messages.subscribe((msg: Message) => {
+    this.WebsocketService.messages.subscribe((msg: Message) => {
 
       //this.options = msg.artists
+
+
 
       msg.data.venues.forEach((a: Venue) => {
         this.venues.push(a)
@@ -69,21 +75,36 @@ export class EditgigComponent {
       })
       this.venue.setValue(this.gig.venue)
     });
+
   }
 
+  ngOnInit() {
+    if (this.id != '') {
+      this.gig = this.WebsocketService.cache.gigs.get(this.id)!
+      console.log(this.WebsocketService.cache.gigs)
+      console.log("Editing", this.id, this.gig)
+    }
+    if (this.gig.id != '') {
+      this.venue.setValue(this.gig.venue)
+      this.gig.artists.forEach((id: string) => {
+        this.artists.add(this.WebsocketService.cache.artists.get(id)!)
+      })
+      this.date.setValue(moment(this.gig.date))
+    }
+  }
 
   saveGig() {
     if (this.date == null) {
       return;
     }
 
-    console.log(this.date.getRawValue()?.format("Y-m-d"), this.artists, this.selectedVenue)
+    console.log(this.date.getRawValue()?.format("Y-MM-DD"), this.artists, this.selectedVenue)
     this.gig.artists.length = 0;
     this.artists.forEach((val: Identifier) => {
       this.gig.artists.push(val.id)
     })
 
-    this.gig.date = this.date.getRawValue()!.format("Y-m-d")
+    this.gig.date = this.date.getRawValue()!.format("Y-MM-DD")
 
     const m: Message = {
       op: 'set',

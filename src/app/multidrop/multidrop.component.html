@@ -2,7 +2,7 @@
   <h3>Selected</h3>
 
   <ul>
-    <li *ngFor="let item of selected">Id: {{item.id}} -> name {{item.name}}
+    <li *ngFor="let item of selected"> {{item?.name}}
       <button mat-mini-fab (click)="removeItem(item)" color="primary" aria-label="Example icon button with a menu icon">
         <mat-icon>remove</mat-icon>
       </button>

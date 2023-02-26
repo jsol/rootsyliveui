@@ -5,8 +5,7 @@ import { WebsocketService, Artist } from "./websocket.service";
 @Component({
   selector: "app-root",
   templateUrl: "./app.component.html",
-  styleUrls: ["./app.component.css"],
-  providers: [WebsocketService]
+  styleUrls: ["./app.component.css"]
 })
 
 export class AppComponent {
@@ -14,5 +13,9 @@ export class AppComponent {
   content = '';
   received: Artist[] = [];
   sent = [];
+
+  addGig() {
+    console.log("Add gig")
+  }
 
 }

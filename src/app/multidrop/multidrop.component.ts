@@ -18,6 +18,7 @@ export class MultidropComponent implements OnInit {
   @Input() type: string = 'artists';
 
   constructor(private WebsocketService: WebsocketService) {
+    this.WebsocketService = WebsocketService
     WebsocketService.messages.subscribe(msg => {
 
       type key = keyof typeof msg.data
@@ -26,14 +27,24 @@ export class MultidropComponent implements OnInit {
       console.log(this.type)
 
       msg.data[this.type as key].forEach(a => {
-        this.options.push(a)
-        console.log("SHOULD ADD ARTIST: " + a.name);
+        const found = this.options.find(c => c.id == a.id)
+        if (!found) {
+          this.options.push(a)
+        }
       })
       this.myControl.reset()
     });
   }
 
   ngOnInit() {
+    type key = keyof typeof this.WebsocketService.cache
+
+    this.WebsocketService.cache[this.type as key]!.forEach((v, k) => {
+      const found = this.options.find(c => c.id == k)
+      if (!found) {
+        this.options.push(v)
+      }
+    })
     this.filteredOptions = this.myControl.valueChanges.pipe(
       startWith(''),
       map(value => {

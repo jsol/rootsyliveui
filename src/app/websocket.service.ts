@@ -36,8 +36,8 @@ export interface MsgData {
 
 export interface Cache {
   artists: Map<string, Artist>;
-  venues: Map<string, Artist>;
-  gigs: Map<string, Artist>
+  venues: Map<string, Venue>;
+  gigs: Map<string, Gig>
 }
 
 export interface Message {
@@ -54,8 +54,8 @@ export class WebsocketService {
   constructor() {
     this.cache = {
       artists: new Map<string, Artist>(),
-      venues: new Map<string, Artist>(),
-      gigs: new Map<string, Artist>()
+      venues: new Map<string, Venue>(),
+      gigs: new Map<string, Gig>()
     }
     this.subject = this.create(CHAT_URL);
     this.messages = <Subject<Message>>this.subject.pipe(
@@ -68,6 +68,7 @@ export class WebsocketService {
         }
       )
     );
+    console.log ("Setting up new Websocket!")
 
     this.messages.subscribe((msg: Message) => {
 
@@ -75,13 +76,23 @@ export class WebsocketService {
 
       if (msg.op == 'set') {
         msg.data.venues.forEach((a: Venue) => {
-          this.cache.venues.set(a.id, a)
+          const existing = this.cache.venues.get(a.id)
+          if (!existing) {
+            this.cache.venues.set(a.id, a)
+          }
         })
         msg.data.gigs.forEach((a: Gig) => {
-          this.cache.gigs.set(a.id, a)
+          const existing = this.cache.gigs.get(a.id);
+          if (!existing) {
+            this.cache.gigs.set(a.id, a)
+            console.log("Addid gig id", a.id)
+          }
         })
         msg.data.artists.forEach((a: Artist) => {
-          this.cache.artists.set(a.id, a)
+          const existing = this.cache.artists.get(a.id);
+          if (!existing) {
+            this.cache.artists.set(a.id, a)
+          }
         })
       }
     });

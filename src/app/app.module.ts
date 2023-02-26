@@ -14,13 +14,20 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { EditgigComponent } from './editgig/editgig.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-
+import { GigListComponent } from './gig-list/gig-list.component';
+import { MatTableModule } from '@angular/material/table';
+import { MatSortModule } from '@angular/material/sort';
+import { MatDialogModule } from '@angular/material/dialog';
+import { EditGigDialogComponent } from './edit-gig-dialog/edit-gig-dialog.component';
+import { WebsocketService } from "./websocket.service";
 
 @NgModule({
   declarations: [
     AppComponent,
     MultidropComponent,
-    EditgigComponent
+    EditgigComponent,
+    GigListComponent,
+    EditGigDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -34,9 +41,12 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
     MatSelectModule,
     MatIconModule,
     MatButtonModule,
-    MatDatepickerModule
+    MatDatepickerModule,
+    MatTableModule,
+    MatSortModule,
+    MatDialogModule
   ],
-  providers: [],
+  providers: [WebsocketService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
