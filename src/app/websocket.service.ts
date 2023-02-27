@@ -24,7 +24,12 @@ export interface Gig {
   id: string;
   name: string;
   date: string;
+  openTime: string;
   venue: string;
+  state: string;
+  guarantee: string;
+  hospitality: string;
+  publicDate: string;
   artists: string[];
 }
 
@@ -40,9 +45,32 @@ export interface Cache {
   gigs: Map<string, Gig>
 }
 
+export interface TemplateInfo {
+  id: string;
+  name: string;
+  text: string;
+}
+export interface Template {
+  [name: string]: TemplateInfo[]
+}
+
+export interface Option {
+  [name: string]: string[];
+}
+
+export interface Settings {
+  options: Option,
+  templates: Template
+}
+
 export interface Message {
   op: string;
   data: MsgData;
+  settings?: Settings;
+}
+
+function copy(from: any, to: any) {
+
 }
 
 @Injectable()
@@ -50,6 +78,7 @@ export class WebsocketService {
   private subject: AnonymousSubject<MessageEvent>;
   public messages: Subject<Message>;
   public cache: Cache;
+  public settings: Settings = { options: {}, templates: {} };
 
   constructor() {
     this.cache = {
@@ -68,7 +97,7 @@ export class WebsocketService {
         }
       )
     );
-    console.log ("Setting up new Websocket!")
+    console.log("Setting up new Websocket!")
 
     this.messages.subscribe((msg: Message) => {
 
@@ -86,6 +115,7 @@ export class WebsocketService {
           if (!existing) {
             this.cache.gigs.set(a.id, a)
             console.log("Addid gig id", a.id)
+          } else {
           }
         })
         msg.data.artists.forEach((a: Artist) => {
@@ -94,6 +124,11 @@ export class WebsocketService {
             this.cache.artists.set(a.id, a)
           }
         })
+
+        if (msg.settings) {
+          console.log('SETTINGS:', msg.settings)
+          this.settings = msg.settings
+        }
       }
     });
   }

@@ -28,6 +28,14 @@
         <td mat-cell *matCellDef="let element"> {{element.artists}} </td>
     </ng-container>
 
+        <!-- State Column -->
+        <ng-container matColumnDef="state">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by state">
+                State
+            </th>
+            <td mat-cell *matCellDef="let element"> {{element.state}} </td>
+        </ng-container>
+
     <!-- Edit Column -->
     <ng-container matColumnDef="id">
         <th mat-header-cell *matHeaderCellDef>
@@ -37,6 +45,8 @@
             <app-edit-gig-dialog [id]="element.id" type="edit"></app-edit-gig-dialog>
         </td>
     </ng-container>
+
+
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>

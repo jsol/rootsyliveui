@@ -1,0 +1,17 @@
+<div *ngIf="templates.length > 0">
+    <mat-form-field appearance="fill">
+        <mat-label>Templates</mat-label>
+        <mat-select [(value)]="template">
+            <mat-option [value]="option" *ngFor="let option of templates">{{ option.name }}</mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <button mat-mini-fab (click)="applyTemplate()" color="primary" aria-label="Populate input with template">
+        <mat-icon>arrow_downward</mat-icon>
+    </button>
+</div>
+
+<mat-form-field appearance="fill">
+    <mat-label>{{ name }}</mat-label>
+    <textarea matInput [formControl]="fc">{{ value }}</textarea>
+</mat-form-field>

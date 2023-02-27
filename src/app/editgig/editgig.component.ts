@@ -50,12 +50,20 @@ export class EditgigComponent implements OnInit {
     name: "New gig",
     venue: "",
     date: "",
+    openTime: '',
+    publicDate: '',
+    state: '',
+    guarantee: '',
+    hospitality: '',
     artists: []
   }
   date = new FormControl(moment(this.gig.date));
+  publicDate = new FormControl(moment(this.gig.publicDate));
   venue = new FormControl<string | Identifier>('');
   artists = new Set<Identifier>();
   venues: Venue[] = []
+  states: string[] = []
+  hospitalityOpts: string[] = []
   selectedVenue: string = ''
   id: string = ''
 
@@ -63,26 +71,41 @@ export class EditgigComponent implements OnInit {
     this.id = data.id
     this.WebsocketService = WebsocketService
 
+
     this.WebsocketService.messages.subscribe((msg: Message) => {
 
       //this.options = msg.artists
 
-
-
       msg.data.venues.forEach((a: Venue) => {
-        this.venues.push(a)
-        console.log("SHOULD ADD VENUE: " + a.name);
+        if (!this.venues.find(f => f.id == a.id)) {
+          this.venues.push(a)
+        }
       })
-      this.venue.setValue(this.gig.venue)
     });
 
   }
 
   ngOnInit() {
+
+    this.WebsocketService.cache.venues.forEach(v => {
+      if (!this.venues.find(f => f.id == v.id)) {
+        this.venues.push(v)
+      }
+    })
+    this.states = this.WebsocketService.settings.options['state'];
+    this.hospitalityOpts = this.WebsocketService.settings.options['hospitality'];
+    this.venues.sort((a, b) => {
+      if (a.name < b.name) {
+        return -1
+      }
+      if (a.name > b.name) {
+        return 1
+      }
+      return 0
+    })
+
     if (this.id != '') {
       this.gig = this.WebsocketService.cache.gigs.get(this.id)!
-      console.log(this.WebsocketService.cache.gigs)
-      console.log("Editing", this.id, this.gig)
     }
     if (this.gig.id != '') {
       this.venue.setValue(this.gig.venue)
@@ -90,13 +113,18 @@ export class EditgigComponent implements OnInit {
         this.artists.add(this.WebsocketService.cache.artists.get(id)!)
       })
       this.date.setValue(moment(this.gig.date))
+      this.publicDate.setValue(moment(this.gig.publicDate))
     }
+
+    console.log("EDIT GIG", this.gig)
   }
 
   saveGig() {
     if (this.date == null) {
       return;
     }
+
+    console.log("Saving gig", this.gig.guarantee)
 
     console.log(this.date.getRawValue()?.format("Y-MM-DD"), this.artists, this.selectedVenue)
     this.gig.artists.length = 0;
@@ -105,6 +133,7 @@ export class EditgigComponent implements OnInit {
     })
 
     this.gig.date = this.date.getRawValue()!.format("Y-MM-DD")
+    this.gig.publicDate = this.publicDate.getRawValue()!.format("Y-MM-DD")
 
     const m: Message = {
       op: 'set',

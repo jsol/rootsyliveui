@@ -5,7 +5,7 @@
 <form class="example-form">
     <mat-form-field class="example-full-width">
         <mat-label>Name</mat-label>
-        <input matInput [value]="gig.name">
+        <input matInput [(ngModel)]="gig.name" name="name">
     </mat-form-field>
 
     <h2>Date</h2>
@@ -15,6 +15,12 @@
         <mat-hint>MMMM DD, YYYY</mat-hint>
         <mat-datepicker-toggle matIconSuffix [for]="dp"></mat-datepicker-toggle>
         <mat-datepicker #dp></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field class="example-full-width">
+        <mat-label>Open time</mat-label>
+        <input matInput [(ngModel)]="gig.openTime" placeholder="18:00" name="openDate">
+        <mat-hint>hh:mm</mat-hint>
     </mat-form-field>
 
     <div>
@@ -31,6 +37,40 @@
             </mat-select>
         </mat-form-field>
     </div>
+
+    <h2>State</h2>
+    <div>
+        <mat-form-field appearance="fill">
+            <mat-label>State</mat-label>
+            <mat-select [(value)]="gig.state">
+                <mat-option [value]="option" *ngFor="let option of states">{{ option }}</mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+
+    <h2>Guarantee</h2>
+    <div>
+        <app-templated-text name="guarantee" type="gig.guarantee" [(value)]="gig.guarantee" class="example-full-width"></app-templated-text>
+    </div>
+    <h2>Hospitality</h2>
+    <div>
+        <mat-form-field appearance="fill">
+            <mat-label>Hospitality</mat-label>
+            <mat-select [(value)]="gig.hospitality">
+                <mat-option [value]="option" *ngFor="let option of hospitalityOpts">{{ option }}</mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+
+    <h2>Launch date</h2>
+    <mat-form-field appearance="fill">
+        <mat-label>Public date</mat-label>
+        <input matInput [matDatepicker]="dp2" [formControl]="publicDate">
+        <mat-hint>MMMM DD, YYYY</mat-hint>
+        <mat-datepicker-toggle matIconSuffix [for]="dp2"></mat-datepicker-toggle>
+        <mat-datepicker #dp2></mat-datepicker>
+    </mat-form-field>
+
     <div>
         <button mat-fab (click)="saveGig()" color="primary" aria-label="Example icon button with a menu icon">
             <mat-icon>save</mat-icon>

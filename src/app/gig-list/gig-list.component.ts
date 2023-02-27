@@ -11,6 +11,17 @@ interface ListGig {
   date: string;
   artists: string;
   venue: string;
+  state: string;
+}
+
+function mapGig(g: Gig, ws: WebsocketService) {
+  return {
+    id: g.id,
+    date: g.date,
+    venue: ws.cache.venues.get(g.venue)!.name,
+    artists: g.artists.map(a => ws.cache.artists.get(a)!.name).join(' / '),
+    state: g.state
+  }
 }
 
 @Component({
@@ -19,18 +30,13 @@ interface ListGig {
   styleUrls: ['./gig-list.component.css']
 })
 export class GigListComponent implements AfterViewInit {
-  displayedColumns: string[] = ['date', 'venue', 'artists', 'id'];
+  displayedColumns: string[] = ['date', 'venue', 'artists', 'state', 'id'];
   dataSource!: MatTableDataSource<ListGig>;
 
   constructor(private _liveAnnouncer: LiveAnnouncer, private _websocket: WebsocketService) {
     this.dataSource = new MatTableDataSource([] as ListGig[])
     _websocket.cache.gigs.forEach((g: Gig) => {
-      this.dataSource.data.push({
-        id: g.id,
-        date: g.date,
-        venue: _websocket.cache.venues.get(g.venue)!.name,
-        artists: g.artists.map(a => _websocket.cache.artists.get(a)!.name).join(' / ')
-      })
+      this.dataSource.data.push(mapGig(g, _websocket))
     })
 
     _websocket.messages.subscribe((msg: Message) => {
@@ -39,16 +45,17 @@ export class GigListComponent implements AfterViewInit {
           const found = this.dataSource.data.find(c => c.id == g.id)
 
           if (found) {
+            const ng = mapGig(g, _websocket)
+            let k: keyof typeof ng;
+            for (k in ng) {
+              found[k] = ng[k];
+            }
             found.artists = g.artists.map(a => _websocket.cache.artists.get(a)!.name).join(' / ')
             found.date = g.date
             found.venue = _websocket.cache.venues.get(g.venue)!.name
+            found.state = g.state
           } else {
-            this.dataSource.data.push({
-              id: g.id,
-              date: g.date,
-              venue: _websocket.cache.venues.get(g.venue)!.name,
-              artists: g.artists.map(a => _websocket.cache.artists.get(a)!.name).join(' / ')
-            })
+            this.dataSource.data.push(mapGig(g, _websocket))
             console.log("Pushed gig", g)
           }
         })

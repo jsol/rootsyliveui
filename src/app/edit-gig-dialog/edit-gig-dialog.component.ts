@@ -16,6 +16,7 @@ export class EditGigDialogComponent {
 
   openDialog() {
     const dialogRef = this.dialog.open(EditgigComponent, {
+
       data: {
         id: this.id,
       }

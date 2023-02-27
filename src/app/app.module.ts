@@ -24,6 +24,10 @@ import { WebsocketService } from "./websocket.service";
 import { ArtistListComponent } from './artist-list/artist-list.component';
 import { EditArtistComponent } from './edit-artist/edit-artist.component';
 import { EditArtistDialogComponent } from './edit-artist-dialog/edit-artist-dialog.component';
+import { VenueListComponent } from './venue-list/venue-list.component';
+import { EditVenueComponent } from './edit-venue/edit-venue.component';
+import { EditVenueDialogComponent } from './edit-venue-dialog/edit-venue-dialog.component';
+import { TemplatedTextComponent } from './templated-text/templated-text.component';
 
 @NgModule({
   declarations: [
@@ -34,7 +38,11 @@ import { EditArtistDialogComponent } from './edit-artist-dialog/edit-artist-dial
     EditGigDialogComponent,
     ArtistListComponent,
     EditArtistComponent,
-    EditArtistDialogComponent
+    EditArtistDialogComponent,
+    VenueListComponent,
+    EditVenueComponent,
+    EditVenueDialogComponent,
+    TemplatedTextComponent
   ],
   imports: [
     BrowserModule,
