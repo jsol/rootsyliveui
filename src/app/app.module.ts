@@ -19,6 +19,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { EditGigDialogComponent } from './edit-gig-dialog/edit-gig-dialog.component';
 import { WebsocketService } from "./websocket.service";
 import { ArtistListComponent } from './artist-list/artist-list.component';
@@ -28,6 +29,14 @@ import { VenueListComponent } from './venue-list/venue-list.component';
 import { EditVenueComponent } from './edit-venue/edit-venue.component';
 import { EditVenueDialogComponent } from './edit-venue-dialog/edit-venue-dialog.component';
 import { TemplatedTextComponent } from './templated-text/templated-text.component';
+import { ShowGigComponent } from './show-gig/show-gig.component';
+import { UploadFileComponent } from './upload-file/upload-file.component';
+import { HttpClientModule } from '@angular/common/http';
+import { EditUrlsComponent } from './edit-urls/edit-urls.component';
+import { SettingsComponent } from './settings/settings.component';
+import { OptionsListComponent } from './options-list/options-list.component';
+import { AddOptionDialogComponent } from './add-option-dialog/add-option-dialog.component';
+import { AddOptionComponent } from './add-option/add-option.component';
 
 @NgModule({
   declarations: [
@@ -42,7 +51,14 @@ import { TemplatedTextComponent } from './templated-text/templated-text.componen
     VenueListComponent,
     EditVenueComponent,
     EditVenueDialogComponent,
-    TemplatedTextComponent
+    TemplatedTextComponent,
+    ShowGigComponent,
+    UploadFileComponent,
+    EditUrlsComponent,
+    SettingsComponent,
+    OptionsListComponent,
+    AddOptionDialogComponent,
+    AddOptionComponent
   ],
   imports: [
     BrowserModule,
@@ -60,7 +76,9 @@ import { TemplatedTextComponent } from './templated-text/templated-text.componen
     MatTableModule,
     MatSortModule,
     MatDialogModule,
-    MatTabsModule
+    MatTabsModule,
+    HttpClientModule,
+    MatProgressBarModule
   ],
   providers: [WebsocketService],
   bootstrap: [AppComponent]

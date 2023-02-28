@@ -1,80 +1,117 @@
-
 <h1 mat-dialog-title>{{gig.name}}</h1>
 
 <div mat-dialog-content>
-<form class="example-form">
-    <mat-form-field class="example-full-width">
-        <mat-label>Name</mat-label>
-        <input matInput [(ngModel)]="gig.name" name="name">
-    </mat-form-field>
-
-    <h2>Date</h2>
-    <mat-form-field appearance="fill">
-        <mat-label>Date</mat-label>
-        <input matInput [matDatepicker]="dp" [formControl]="date">
-        <mat-hint>MMMM DD, YYYY</mat-hint>
-        <mat-datepicker-toggle matIconSuffix [for]="dp"></mat-datepicker-toggle>
-        <mat-datepicker #dp></mat-datepicker>
-    </mat-form-field>
-
-    <mat-form-field class="example-full-width">
-        <mat-label>Open time</mat-label>
-        <input matInput [(ngModel)]="gig.openTime" placeholder="18:00" name="openDate">
-        <mat-hint>hh:mm</mat-hint>
-    </mat-form-field>
-
-    <div>
-        <h2>Artist</h2>
-        <app-multidrop type="artists" [selected]="artists"></app-multidrop>
-    </div>
-
-    <h2>Venue</h2>
-    <div>
-        <mat-form-field appearance="fill">
-            <mat-label>Venue</mat-label>
-            <mat-select [(value)]="gig.venue">
-                <mat-option [value]="option.id" *ngFor="let option of venues">{{ option.name }}</mat-option>
-            </mat-select>
+    <form class="example-form">
+        <mat-form-field class="example-full-width">
+            <mat-label>Name</mat-label>
+            <input matInput [(ngModel)]="gig.name" name="name">
         </mat-form-field>
-    </div>
 
-    <h2>State</h2>
-    <div>
+        <h2>Date</h2>
         <mat-form-field appearance="fill">
-            <mat-label>State</mat-label>
-            <mat-select [(value)]="gig.state">
-                <mat-option [value]="option" *ngFor="let option of states">{{ option }}</mat-option>
-            </mat-select>
+            <mat-label>Date</mat-label>
+            <input matInput [matDatepicker]="dp" [formControl]="date">
+            <mat-hint>MMMM DD, YYYY</mat-hint>
+            <mat-datepicker-toggle matIconSuffix [for]="dp"></mat-datepicker-toggle>
+            <mat-datepicker #dp></mat-datepicker>
         </mat-form-field>
-    </div>
 
-    <h2>Guarantee</h2>
-    <div>
-        <app-templated-text name="guarantee" type="gig.guarantee" [(value)]="gig.guarantee" class="example-full-width"></app-templated-text>
-    </div>
-    <h2>Hospitality</h2>
-    <div>
+        <mat-form-field class="example-full-width">
+            <mat-label>Open time</mat-label>
+            <input matInput [(ngModel)]="gig.openTime" placeholder="18:00" name="openDate">
+            <mat-hint>hh:mm</mat-hint>
+        </mat-form-field>
+
+        <div>
+            <h2>Artist</h2>
+            <app-multidrop type="artists" [selected]="artists"></app-multidrop>
+        </div>
+
+        <h2>Venue</h2>
+        <div>
+            <mat-form-field appearance="fill">
+                <mat-label>Venue</mat-label>
+                <mat-select [(value)]="gig.venue">
+                    <mat-option [value]="option.id" *ngFor="let option of venues">{{ option.name }}</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+
+        <h2>Ticket prices</h2>
+        <div>
+            <app-templated-text name="ticketPrices" type="gig.ticketPrices" [(value)]="gig.ticketPrices" [replace]="replaceInTemplate"
+                class="example-full-width"></app-templated-text>
+        </div>
+
+        <h2>Guarantee</h2>
+        <div>
+            <app-templated-text name="guarantee" type="gig.guarantee" [(value)]="gig.guarantee" [replace]="replaceInTemplate"
+                class="example-full-width"></app-templated-text>
+        </div>
+
+        <h2>Hospitality</h2>
+        <div>
+            <mat-form-field appearance="fill">
+                <mat-label>Hospitality</mat-label>
+                <mat-select [(value)]="gig.hospitality">
+                    <mat-option [value]="option" *ngFor="let option of hospitalityOpts">{{ option }}</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+
+        <h2>Entourage</h2>
+        <div>
+            <app-templated-text name="entourage" type="gig.entourage" [(value)]="gig.entourage" [replace]="replaceInTemplate"
+                class="example-full-width"></app-templated-text>
+        </div>
+
+        <h2>Special Arrangements</h2>
+        <div>
+            <app-templated-text name="special" type="gig.special" [(value)]="gig.special" [replace]="replaceInTemplate"
+                class="example-full-width"></app-templated-text>
+        </div>
+
+        <h2>Notes</h2>
+        <div>
+            <app-templated-text name="notes" type="gig.notes" [(value)]="gig.notes" [replace]="replaceInTemplate"
+                class="example-full-width"></app-templated-text>
+        </div>
+
+        <h2>Upload file</h2>
+        <ul>
+            <li *ngFor="let item of gig.files">
+                <a href="{{downloadBase}}{{item?.serverName}}">{{item?.localName}}</a>
+            </li>
+        </ul>
+        <app-upload-file (uploaded)="uploadedFile($event)"></app-upload-file>
+
+        <h2>URLs</h2>
+        <app-edit-urls [urls]="gig.urls"></app-edit-urls>
+
+        <h2>Launch date</h2>
         <mat-form-field appearance="fill">
-            <mat-label>Hospitality</mat-label>
-            <mat-select [(value)]="gig.hospitality">
-                <mat-option [value]="option" *ngFor="let option of hospitalityOpts">{{ option }}</mat-option>
-            </mat-select>
+            <mat-label>Public date</mat-label>
+            <input matInput [matDatepicker]="dp2" [formControl]="publicDate">
+            <mat-hint>MMMM DD, YYYY</mat-hint>
+            <mat-datepicker-toggle matIconSuffix [for]="dp2"></mat-datepicker-toggle>
+            <mat-datepicker #dp2></mat-datepicker>
         </mat-form-field>
-    </div>
 
-    <h2>Launch date</h2>
-    <mat-form-field appearance="fill">
-        <mat-label>Public date</mat-label>
-        <input matInput [matDatepicker]="dp2" [formControl]="publicDate">
-        <mat-hint>MMMM DD, YYYY</mat-hint>
-        <mat-datepicker-toggle matIconSuffix [for]="dp2"></mat-datepicker-toggle>
-        <mat-datepicker #dp2></mat-datepicker>
-    </mat-form-field>
 
-    <div>
-        <button mat-fab (click)="saveGig()" color="primary" aria-label="Example icon button with a menu icon">
-            <mat-icon>save</mat-icon>
-        </button>
-    </div>
-</form>
+        <h2>State</h2>
+        <div>
+            <mat-form-field appearance="fill">
+                <mat-label>State</mat-label>
+                <mat-select [(value)]="gig.state">
+                    <mat-option [value]="option" *ngFor="let option of states">{{ option }}</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+
+        <div>
+            <button mat-fab (click)="saveGig()" color="primary" aria-label="Example icon button with a menu icon">
+                <mat-icon>save</mat-icon>
+            </button>
+        </div>
+    </form>
 </div>

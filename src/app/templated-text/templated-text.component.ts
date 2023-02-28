@@ -15,6 +15,7 @@ export class TemplatedTextComponent implements OnInit {
   @Input() name: string = '';
   @Input() value: string = '';
   @Input() type: string = '';
+  @Input() replace: (str:string) => string = (str:string) => str;
   @Output() valueChange = new EventEmitter<string>();
 
   constructor(private WebsocketService: WebsocketService) {
@@ -27,16 +28,18 @@ export class TemplatedTextComponent implements OnInit {
     console.log('ApplyTemplate: ', this.template)
 
     if (this.template) {
-      this.fc.setValue(this.template.text)
+      this.fc.setValue(this.replace(this.template.text))
     }
   }
 
   ngOnInit() {
-    this.WebsocketService.settings.templates[this.type].forEach(t => {
-      this.templates.push(t);
-    })
+    if (this.WebsocketService.settings.templates[this.type]) {
+      this.WebsocketService.settings.templates[this.type].forEach(t => {
+        this.templates.push(t);
+      })
+    }
 
-      this.fc.setValue(this.value)
+    this.fc.setValue(this.value)
 
     this.fc.valueChanges.subscribe((str: string) => {
       this.valueChange.emit(str)

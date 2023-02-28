@@ -1,7 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { WebsocketService, Artist, Gig, Venue, Message } from '../websocket.service';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { FormControl } from '@angular/forms';
 
 export interface EditData {
   id: string;
@@ -15,9 +14,14 @@ export interface EditData {
 export class EditArtistComponent {
   artist: Artist = {
     id: '',
-    name: 'New Artist'
+    name: 'New Artist',
+    bio: '',
+    form: '',
+    files: [],
+    urls: []
   }
   id: string = ''
+  forms: string[] = []
 
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: EditData, private WebsocketService: WebsocketService) {
@@ -29,7 +33,7 @@ export class EditArtistComponent {
     if (this.id != '') {
       this.artist = this.WebsocketService.cache.artists.get(this.id)!
     }
-
+    this.forms = this.WebsocketService.settings.options['bandFormat'];
 
   }
 

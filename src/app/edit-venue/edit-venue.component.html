@@ -6,7 +6,16 @@
             <mat-label>Name</mat-label>
             <input matInput [(ngModel)]="venue.name" name="name">
         </mat-form-field>
-
+        <mat-form-field class="example-full-width">
+            <mat-label>City</mat-label>
+            <input matInput [(ngModel)]="venue.city" name="city">
+        </mat-form-field>
+        <mat-form-field class="example-full-width">
+            <mat-label>Address</mat-label>
+            <input matInput [(ngModel)]="venue.address" name="address">
+        </mat-form-field>
+        <h2>URLs</h2>
+        <app-edit-urls [urls]="venue.urls"></app-edit-urls>
     </form>
 </div>
 <div>

@@ -1,5 +1,5 @@
 
-<button mat-mini-fab color="primary" (click)="openDialog()"
+<button mat-mini-fab color="primary" (click)="openDialog(); $event.stopPropagation()"
 aria-label="Button with an edit icon">
 <mat-icon>{{type}}</mat-icon>
 </button>

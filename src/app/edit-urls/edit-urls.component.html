@@ -1,0 +1,25 @@
+<div>
+    <h3>Current URLs</h3>
+
+    <ul>
+        <li *ngFor="let item of urls"> {{item?.name}} :{{item?.url}}
+            <button mat-mini-fab (click)="removeItem(item)" color="primary"
+                aria-label="Example icon button with a menu icon">
+                <mat-icon>remove</mat-icon>
+            </button>
+        </li>
+    </ul>
+
+</div>
+
+<mat-form-field class="example-full-width" appearance="fill">
+    <mat-label>Text</mat-label>
+    <input type="text" matInput [formControl]="name">
+</mat-form-field>
+<mat-form-field class="example-full-width" appearance="fill">
+    <mat-label>Url</mat-label>
+    <input type="text" matInput [formControl]="url">
+</mat-form-field>
+<button mat-mini-fab (click)="addItem()" color="primary" aria-label="Example icon button with a menu icon">
+    <mat-icon>add</mat-icon>
+  </button>

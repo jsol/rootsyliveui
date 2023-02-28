@@ -3,21 +3,39 @@ import { Observable, Observer } from 'rxjs';
 import { AnonymousSubject } from 'rxjs/internal/Subject';
 import { Subject } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
+import { environment } from '../environments/environment';
 
-const CHAT_URL = "ws://localhost:8080";
+
 export interface Identifier {
   id: string;
   name: string;
 }
 
+export interface Url {
+  name: string;
+  url: string;
+}
+
 export interface Artist {
   id: string;
   name: string;
+  form: string;
+  bio: string;
+  urls: Url[];
+  files: File[]
 }
 
 export interface Venue {
   id: string;
   name: string;
+  city: string;
+  address: string;
+  urls: Url[];
+}
+export interface File {
+  serverName: string;
+  localName: string;
+  size: number;
 }
 
 export interface Gig {
@@ -30,13 +48,19 @@ export interface Gig {
   guarantee: string;
   hospitality: string;
   publicDate: string;
+  notes: string;
+  ticketPrices: string;
+  entourage: string;
+  special: string;
+  files: File[];
+  urls: Url[];
   artists: string[];
 }
 
 export interface MsgData {
   artists: Artist[];
   venues: Venue[];
-  gigs: Gig[]
+  gigs: Gig[];
 }
 
 export interface Cache {
@@ -67,6 +91,7 @@ export interface Message {
   op: string;
   data: MsgData;
   settings?: Settings;
+  auth?: string;
 }
 
 function copy(from: any, to: any) {
@@ -80,13 +105,15 @@ export class WebsocketService {
   public cache: Cache;
   public settings: Settings = { options: {}, templates: {} };
 
+  token = 'AUTH TOKEN';
+
   constructor() {
     this.cache = {
       artists: new Map<string, Artist>(),
       venues: new Map<string, Venue>(),
       gigs: new Map<string, Gig>()
     }
-    this.subject = this.create(CHAT_URL);
+    this.subject = this.create(environment.wsUrl);
     this.messages = <Subject<Message>>this.subject.pipe(
       shareReplay({ refCount: true, bufferSize: 1 }),
       map(
@@ -102,6 +129,19 @@ export class WebsocketService {
     this.messages.subscribe((msg: Message) => {
 
       //this.options = msg.artists
+
+      if (msg.op == 'auth') {
+        this.messages.next({
+          op: 'auth',
+          data: {
+            artists: [],
+            venues: [],
+            gigs: []
+          },
+          auth: this.token
+        })
+        return
+      }
 
       if (msg.op == 'set') {
         msg.data.venues.forEach((a: Venue) => {

@@ -4,6 +4,7 @@ import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { WebsocketService, Gig, Message } from '../websocket.service';
+import { animate, state, style, transition, trigger } from '@angular/animations';
 
 
 interface ListGig {
@@ -27,11 +28,29 @@ function mapGig(g: Gig, ws: WebsocketService) {
 @Component({
   selector: 'app-gig-list',
   templateUrl: './gig-list.component.html',
-  styleUrls: ['./gig-list.component.css']
+  styleUrls: ['./gig-list.component.css'],
+  animations: [
+    trigger('expandableRow', [
+      state('collapsed, void', style({
+        height: '0px',
+        visibility: 'hidden'
+      })),
+      state('expanded', style({
+        'min-height': '48px',
+        height: '*',
+        visibility: 'visible'
+      })),
+      transition(
+        'expanded <=> collapsed, void <=> *',
+        animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')
+      ),
+    ])
+  ]
 })
 export class GigListComponent implements AfterViewInit {
   displayedColumns: string[] = ['date', 'venue', 'artists', 'state', 'id'];
   dataSource!: MatTableDataSource<ListGig>;
+  expandedElement: string = '';
 
   constructor(private _liveAnnouncer: LiveAnnouncer, private _websocket: WebsocketService) {
     this.dataSource = new MatTableDataSource([] as ListGig[])
@@ -82,5 +101,12 @@ export class GigListComponent implements AfterViewInit {
     } else {
       this._liveAnnouncer.announce('Sorting cleared');
     }
+  }
+
+  toggleExpandableSymbol(symbol: string): void {
+    console.log('Toggle id', symbol)
+    this.expandedElement = this.expandedElement === symbol
+      ? ''
+      : symbol;
   }
 }

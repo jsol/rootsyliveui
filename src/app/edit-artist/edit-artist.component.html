@@ -6,7 +6,20 @@
             <mat-label>Name</mat-label>
             <input matInput [(ngModel)]="artist.name" name="name">
         </mat-form-field>
-
+        <div>
+            <mat-form-field appearance="fill">
+                <mat-label>Form</mat-label>
+                <mat-select [(value)]="artist.form">
+                    <mat-option [value]="option" *ngFor="let option of forms">{{ option }}</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <mat-form-field class="example-full-width">
+            <mat-label>About</mat-label>
+            <textarea matInput [(ngModel)]="artist.bio" name="bio"></textarea>
+        </mat-form-field>
+        <h2>URLs</h2>
+        <app-edit-urls [urls]="artist.urls"></app-edit-urls>
     </form>
 </div>
 <div>

@@ -5,6 +5,8 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormControl } from '@angular/forms';
 import { MAT_MOMENT_DATE_FORMATS, MomentDateAdapter } from '@angular/material-moment-adapter';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
+import { UploadedFile } from '../upload-file/upload-file.component';
+import { environment } from '../../environments/environment';
 
 // Depending on whether rollup is used, moment needs to be imported differently.
 // Since Moment.js doesn't have a default export, we normally need to import using the `* as`
@@ -45,6 +47,7 @@ export const MY_FORMATS = {
   ],
 })
 export class EditgigComponent implements OnInit {
+  downloadBase = environment.baseUrl + '/download-file/'
   gig: Gig = {
     id: "",
     name: "New gig",
@@ -55,6 +58,12 @@ export class EditgigComponent implements OnInit {
     state: '',
     guarantee: '',
     hospitality: '',
+    notes: '',
+    ticketPrices: '',
+    entourage: '',
+    special: '',
+    urls: [],
+    files: [],
     artists: []
   }
   date = new FormControl(moment(this.gig.date));
@@ -83,6 +92,14 @@ export class EditgigComponent implements OnInit {
       })
     });
 
+  }
+
+  uploadedFile(name: UploadedFile) {
+    console.log("Done upload: ", name)
+    if (!this.gig.files) {
+      this.gig.files = []
+    }
+    this.gig.files.push(name)
   }
 
   ngOnInit() {
@@ -117,6 +134,17 @@ export class EditgigComponent implements OnInit {
     }
 
     console.log("EDIT GIG", this.gig)
+  }
+
+  replaceInTemplate(str: string): string {
+    const artists = Array.from(this.artists).join(' / ')
+
+    str = str.replaceAll('{{ name }}', this.gig.name);
+    str = str.replaceAll('{{ date }}', this.date.getRawValue()?.format("Y-MM-DD")!);
+    str = str.replaceAll('{{ openTime }}', this.gig.openTime);
+    str = str.replaceAll('{{ artists }}', artists);
+    str = str.replaceAll('{{ venue }}', this.WebsocketService.cache.venues.get(this.gig.venue)!.name);
+    return str
   }
 
   saveGig() {

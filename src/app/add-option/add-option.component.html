@@ -1,0 +1,21 @@
+<h1 mat-dialog-title>Add Option</h1>
+
+<div mat-dialog-content>
+    <form class="example-form">
+        <mat-form-field appearance="fill">
+            <mat-label>Category</mat-label>
+            <mat-select [(value)]="category">
+                <mat-option [value]="option" *ngFor="let option of categories">{{ option }}</mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field class="example-full-width">
+            <mat-label>Value</mat-label>
+            <input matInput [(ngModel)]="value" name="value">
+        </mat-form-field>
+    </form>
+</div>
+<div>
+    <button mat-fab (click)="saveOption()" color="primary" aria-label="Example icon button with a menu icon">
+        <mat-icon>save</mat-icon>
+    </button>
+</div>

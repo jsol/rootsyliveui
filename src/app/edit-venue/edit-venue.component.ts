@@ -15,7 +15,10 @@ export interface EditData {
 export class EditVenueComponent {
   venue: Venue = {
     id: '',
-    name: 'New Venue'
+    name: 'New Venue',
+    city: '',
+    address: '',
+    urls: []
   }
   id: string = ''
 
