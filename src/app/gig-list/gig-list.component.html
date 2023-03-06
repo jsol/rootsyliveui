@@ -42,17 +42,18 @@
         </th>
         <td mat-cell *matCellDef="let element">
             <app-edit-gig-dialog [id]="element.id" type="edit"></app-edit-gig-dialog>
+            <app-delete-button [id]="element.id" [name]="element.name" type="gigs"></app-delete-button>
         </td>
     </ng-container>
 
     <ng-container matColumnDef="expandedDetail">
-        <mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length"
+        <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length"
             [@expandableRow]="element.id === expandedElement ? 'expanded':'collapsed'">
             <div *ngIf="element.id === expandedElement">
                 <app-show-gig [id]="element.id"></app-show-gig>
             </div>
 
-        </mat-cell>
+        </td>
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

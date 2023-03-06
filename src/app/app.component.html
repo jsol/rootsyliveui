@@ -1,8 +1,24 @@
+<div *ngIf="WebsocketService.loggedIn" class="align-right">
+  <img src="{{ WebsocketService.user!.photoUrl }}" referrerpolicy="no-referrer" class="profile">
+
+    {{ WebsocketService.user!.name }}
+    {{ WebsocketService.user!.email }}
+
+  <button mat-mini-fab (click)="WebsocketService.signOut" color="primary" aria-label="Logout">
+    <mat-icon>logout</mat-icon>
+  </button>
+</div>
+<div *ngIf="!WebsocketService.loggedIn" class="align-right">
+  <asl-google-signin-button type='icon' size='medium'></asl-google-signin-button>
+</div>
+
 <mat-tab-group>
   <mat-tab label="Gigs">
     <app-gig-list></app-gig-list>
   </mat-tab>
   <mat-tab label="Artists"> <app-artist-list></app-artist-list> </mat-tab>
   <mat-tab label="Venues"> <app-venue-list></app-venue-list> </mat-tab>
+  <mat-tab label="Promoters"> <app-promoter-list></app-promoter-list> </mat-tab>
+  <mat-tab label="Contracts"> <app-contract-list></app-contract-list> </mat-tab>
   <mat-tab label="Settings"> <app-settings></app-settings> </mat-tab>
 </mat-tab-group>

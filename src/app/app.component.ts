@@ -13,9 +13,10 @@ export class AppComponent {
   content = '';
   received: Artist[] = [];
   sent = [];
+  WebsocketService:WebsocketService;
 
-  addGig() {
-    console.log("Add gig")
+  constructor(WebsocketService: WebsocketService) {
+    this.WebsocketService = WebsocketService
   }
 
 }

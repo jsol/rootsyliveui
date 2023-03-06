@@ -1,0 +1,47 @@
+<h1 mat-dialog-title>{{promoter.name}}</h1>
+
+<div mat-dialog-content>
+    <form class="example-form">
+        <div>
+            <mat-form-field class="example-full-width">
+                <mat-label>Name</mat-label>
+                <input matInput [(ngModel)]="promoter.name" name="name">
+            </mat-form-field>
+        </div>
+        <div>
+
+            <mat-form-field class="example-full-width">
+                <mat-label>Email</mat-label>
+                <input matInput [(ngModel)]="promoter.email" name="email">
+            </mat-form-field>
+        </div>
+        <div>
+            <mat-form-field class="example-full-width">
+                <mat-label>Phone</mat-label>
+                <input matInput [(ngModel)]="promoter.phone" name="phone">
+            </mat-form-field>
+        </div>
+
+        <div>
+            <mat-form-field class="example-full-width">
+                <mat-label>Org type</mat-label>
+                <input matInput [(ngModel)]="promoter.orgType" name="orgType">
+            </mat-form-field>
+        </div>
+
+        <div>
+            <mat-form-field class="example-full-width">
+                <mat-label>Org number</mat-label>
+                <input matInput [(ngModel)]="promoter.orgNbr" name="orgNbr">
+            </mat-form-field>
+        </div>
+
+        <h2>URLs</h2>
+        <app-edit-urls [urls]="promoter.urls"></app-edit-urls>
+    </form>
+</div>
+<div>
+    <button mat-fab (click)="savePromoter()" color="primary" aria-label="Example icon button with a menu icon">
+        <mat-icon>save</mat-icon>
+    </button>
+</div>

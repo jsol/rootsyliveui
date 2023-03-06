@@ -30,6 +30,13 @@ export class VenueListComponent implements AfterViewInit {
     })
 
     _websocket.messages.subscribe((msg: Message) => {
+      if (msg.op == 'del' && msg.delete!.type == 'venues') {
+        const foundIndex = this.dataSource.data.findIndex(c => c.id == msg.delete!.id)
+        if (foundIndex >= 0) {
+          this.dataSource.data.splice(foundIndex, 1)
+          this.dataSource.data = this.dataSource.data
+        }
+      }
       if (msg.op == 'set') {
         msg.data.venues.forEach((g: Venue) => {
           const found = this.dataSource.data.find(c => c.id == g.id)

@@ -19,7 +19,7 @@ function mapGig(g: Gig, ws: WebsocketService) {
   return {
     id: g.id,
     date: g.date,
-    venue: ws.cache.venues.get(g.venue)!.name,
+    venue: g.venue != '' ? ws.cache.venues.get(g.venue)!.name : '',
     artists: g.artists.map(a => ws.cache.artists.get(a)!.name).join(' / '),
     state: g.state
   }
@@ -59,6 +59,14 @@ export class GigListComponent implements AfterViewInit {
     })
 
     _websocket.messages.subscribe((msg: Message) => {
+      if (msg.op == 'del' && msg.delete!.type == 'gigs') {
+        const foundIndex = this.dataSource.data.findIndex(c => c.id == msg.delete!.id)
+        if (foundIndex >= 0) {
+          this.dataSource.data.splice(foundIndex, 1)
+          this.dataSource.data = this.dataSource.data
+        }
+      }
+
       if (msg.op == 'set') {
         msg.data.gigs.forEach((g: Gig) => {
           const found = this.dataSource.data.find(c => c.id == g.id)

@@ -1,7 +1,8 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, HostListener } from '@angular/core';
 import { WebsocketService, Artist, Gig, Venue, Message } from '../websocket.service';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormControl } from '@angular/forms';
+import { v4 as uuid } from 'uuid';
 
 export interface EditData {
   id: string;
@@ -31,9 +32,16 @@ export class EditVenueComponent {
   ngOnInit() {
     if (this.id != '') {
       this.venue = this.WebsocketService.cache.venues.get(this.id)!
+    } else {
+      this.venue.id = uuid()
     }
+  }
 
-
+  @HostListener('document:keydown.control.s', ['$event']) onKeydownHandler(event:
+    KeyboardEvent) {
+    console.log('Submitted');
+    event.preventDefault();
+    this.saveVenue()
   }
 
   saveVenue() {
@@ -42,14 +50,8 @@ export class EditVenueComponent {
     }
     console.log(this.venue)
 
-    const m: Message = {
-      op: 'set',
-      data: {
-        venues: [this.venue],
-        artists: [] as Artist[],
-        gigs: [] as Gig[]
-      }
-    }
+    const m: Message = this.WebsocketService.emptyMessage('set')
+    m.data.venues = [this.venue]
     this.WebsocketService.messages.next(m)
   }
 }

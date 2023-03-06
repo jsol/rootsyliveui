@@ -18,9 +18,7 @@ export class EditUrlsComponent {
       url: this.url.getRawValue()!
     })
     console.log(this.urls)
-
   }
-
 
   removeItem(item: Url) {
     const index = this.urls.findIndex(f => f == item);

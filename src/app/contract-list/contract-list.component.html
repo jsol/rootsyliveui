@@ -1,0 +1,42 @@
+<table mat-table [dataSource]="dataSource" matSort (matSortChange)="announceSortChange($event)"
+    class="mat-elevation-z8">
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by name">
+            Name
+        </th>
+        <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="gig">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by gig">
+            Gig
+        </th>
+        <td mat-cell *matCellDef="let element"> {{element.gig}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="published">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by published">
+            Published
+        </th>
+        <td mat-cell *matCellDef="let element"> {{element.published}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="signatures">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by signatures">
+            Signatures
+        </th>
+        <td mat-cell *matCellDef="let element"> {{element.signatures}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="link">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by link">
+            Link
+        </th>
+        <td mat-cell *matCellDef="let element"> <a href="{{element.link}}" target="_blank"> Signing site </a></td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>

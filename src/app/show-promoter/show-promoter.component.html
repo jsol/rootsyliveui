@@ -1,0 +1,16 @@
+<div class="promoter">
+    <div><b>Name:</b> {{promoter!.name}} </div>
+    <div><b>Email:</b> <a href="mailto:{{promoter!.email}}">{{promoter!.email}}</a> </div>
+    <div><b>Phone:</b> {{promoter!.phone}} </div>
+    <div><b>Org. #:</b> {{promoter!.orgNbr}} </div>
+    <div><b>Org type:</b> {{promoter!.orgType}} </div>
+
+    <div *ngIf="promoter!.urls.length > 0">
+        <b>URLs:</b>
+        <ul>
+            <li *ngFor="let item of promoter!.urls">
+                <a href="{{item?.url}}" target="_blank">{{item?.name}}</a>
+            </li>
+        </ul>
+    </div>
+</div>

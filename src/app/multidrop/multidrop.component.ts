@@ -19,7 +19,13 @@ export class MultidropComponent implements OnInit {
 
   constructor(private WebsocketService: WebsocketService) {
     this.WebsocketService = WebsocketService
-    WebsocketService.messages.subscribe(msg => {
+
+  }
+
+  ngOnInit() {
+    type key = keyof typeof this.WebsocketService.cache
+
+    this.WebsocketService.messages.subscribe(msg => {
 
       type key = keyof typeof msg.data
       //this.options = msg.artists
@@ -34,10 +40,6 @@ export class MultidropComponent implements OnInit {
       })
       this.myControl.reset()
     });
-  }
-
-  ngOnInit() {
-    type key = keyof typeof this.WebsocketService.cache
 
     this.WebsocketService.cache[this.type as key]!.forEach((v, k) => {
       const found = this.options.find(c => c.id == k)

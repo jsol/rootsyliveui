@@ -1,0 +1,46 @@
+<h1 mat-dialog-title>{{template.name}}</h1>
+
+<div mat-dialog-content>
+    <form class="example-form">
+        <mat-form-field class="example-full-width">
+            <mat-label>Name</mat-label>
+            <input matInput [(ngModel)]="template.name" name="name">
+        </mat-form-field>
+        <div>
+            <mat-form-field appearance="fill">
+                <mat-label>Category</mat-label>
+                <mat-select [(value)]="category">
+                    <mat-option [value]="option" *ngFor="let option of categories">{{ option }}</mat-option>
+                </mat-select>
+            </mat-form-field>
+
+        </div>
+        <mat-form-field class="wide">
+            <mat-label>Template text</mat-label>
+            <textarea matInput [(ngModel)]="template.text" name="text"></textarea>
+        </mat-form-field>
+        <div>Write text in <a href="https://www.markdowntutorial.com/" target="_blank">Markdown format</a>.</div>
+        <div>Some magic strings gets replaced with information provided:
+            <table>
+                <tr><td>#name#</td><td>The name of the parent entry</td></tr>
+                <tr><td>#artists#</td><td>The artists names</td></tr>
+                <tr><td>#promoters#</td><td>The promoters names</td></tr>
+                <tr><td>#date#</td><td>The date</td></tr>
+                <tr><td>#openTime#</td><td>The open time</td></tr>
+                <tr><td>#venue#</td><td>The venue name</td></tr>
+                <tr><td>#hospitality#</td><td>The Hospitality chosen</td></tr>
+                <tr><td>#guarantee#</td><td>The Guarantee free text field</td></tr>
+                <tr><td>#notes#</td><td>The Notes free text field</td></tr>
+                <tr><td>#ticketPrices#</td><td>The TicketPrices free text field</td></tr>
+                <tr><td>#entourage#</td><td>The Entourage free text field</td></tr>
+                <tr><td>#special#</td><td>The Special free text field</td></tr>
+            </table>
+        </div>
+
+    </form>
+</div>
+<div>
+    <button mat-fab (click)="saveTemplate()" color="primary" aria-label="Example icon button with a menu icon">
+        <mat-icon>save</mat-icon>
+    </button>
+</div>

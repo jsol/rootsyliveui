@@ -4,7 +4,8 @@ import { AnonymousSubject } from 'rxjs/internal/Subject';
 import { Subject } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 import { environment } from '../environments/environment';
-
+import { SocialAuthService } from "@abacritt/angularx-social-login";
+import { SocialUser } from "@abacritt/angularx-social-login";
 
 export interface Identifier {
   id: string;
@@ -38,6 +39,16 @@ export interface File {
   size: number;
 }
 
+export interface Promoter {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  orgNbr: string;
+  orgType: string;
+  urls: Url[];
+}
+
 export interface Gig {
   id: string;
   name: string;
@@ -52,21 +63,45 @@ export interface Gig {
   ticketPrices: string;
   entourage: string;
   special: string;
+  contractText: string;
   files: File[];
   urls: Url[];
+  promoters: string[];
   artists: string[];
+}
+
+export interface Signature {
+  id: string;
+  name: string;
+  org: string;
+  signature: string;
+  time: string;
+}
+
+export interface Contract {
+  id: string;
+  name: string;
+  gig: string;
+  text: string;
+  shasum: string;
+  published: string;
+  signatures: Signature[]
 }
 
 export interface MsgData {
   artists: Artist[];
   venues: Venue[];
   gigs: Gig[];
+  promoters: Promoter[];
+  contracts: Contract[];
 }
 
 export interface Cache {
   artists: Map<string, Artist>;
   venues: Map<string, Venue>;
   gigs: Map<string, Gig>
+  promoters: Map<string, Promoter>,
+  contracts: Map<string, Contract>
 }
 
 export interface TemplateInfo {
@@ -87,11 +122,17 @@ export interface Settings {
   templates: Template
 }
 
+export interface DeleteData{
+  id: string;
+  type: string;
+}
+
 export interface Message {
   op: string;
   data: MsgData;
   settings?: Settings;
   auth?: string;
+  delete?: DeleteData;
 }
 
 function copy(from: any, to: any) {
@@ -105,13 +146,19 @@ export class WebsocketService {
   public cache: Cache;
   public settings: Settings = { options: {}, templates: {} };
 
-  token = 'AUTH TOKEN';
+  token = '';
+  user: SocialUser | null;
+  loggedIn: boolean = false;
 
-  constructor() {
+
+  constructor(private authService: SocialAuthService) {
+    this.user = null
     this.cache = {
       artists: new Map<string, Artist>(),
       venues: new Map<string, Venue>(),
-      gigs: new Map<string, Gig>()
+      gigs: new Map<string, Gig>(),
+      promoters: new Map<string, Promoter>(),
+      contracts: new Map<string, Contract>()
     }
     this.subject = this.create(environment.wsUrl);
     this.messages = <Subject<Message>>this.subject.pipe(
@@ -124,6 +171,25 @@ export class WebsocketService {
         }
       )
     );
+
+    if (environment.googleAuth) {
+      this.authService.authState.subscribe((user) => {
+        this.user = user;
+        this.loggedIn = (user != null);
+        const m = this.emptyMessage('auth')
+        m.auth = this.user.idToken
+
+        this.messages.next(m)
+      });
+    } else {
+      setTimeout(() => {
+        const m = this.emptyMessage('auth')
+        m.auth = 'fakeToken'
+        this.messages.next(m)
+      }, 200);
+    }
+
+
     console.log("Setting up new Websocket!")
 
     this.messages.subscribe((msg: Message) => {
@@ -131,15 +197,8 @@ export class WebsocketService {
       //this.options = msg.artists
 
       if (msg.op == 'auth') {
-        this.messages.next({
-          op: 'auth',
-          data: {
-            artists: [],
-            venues: [],
-            gigs: []
-          },
-          auth: this.token
-        })
+        this.user = null;
+        this.loggedIn = false
         return
       }
 
@@ -164,13 +223,72 @@ export class WebsocketService {
             this.cache.artists.set(a.id, a)
           }
         })
+        msg.data.promoters.forEach((a: Promoter) => {
+          const existing = this.cache.promoters.get(a.id);
+          if (!existing) {
+            this.cache.promoters.set(a.id, a)
+          }
+        })
+        msg.data.contracts.forEach((a: Contract) => {
+          const existing = this.cache.contracts.get(a.id);
+          if (!existing) {
+            this.cache.contracts.set(a.id, a)
+          }
+        })
+
 
         if (msg.settings) {
-          console.log('SETTINGS:', msg.settings)
-          this.settings = msg.settings
+          if (msg.settings.options) {
+            for (const [key, value] of Object.entries(msg.settings.options)) {
+              this.settings.options[key] = value;
+            }
+          }
+          if (msg.settings.templates) {
+            for (const [key, value] of Object.entries(msg.settings.templates)) {
+              this.settings.templates[key] = value;
+            }
+          }
         }
       }
     });
+  }
+
+  emptyMessage(type: string): Message {
+    return {
+      op: type,
+      data: {
+        artists: [],
+        venues: [],
+        gigs: [],
+        promoters: [],
+        contracts: []
+      },
+      settings: {
+        options: {},
+        templates: {}
+      }
+    }
+  }
+
+  inUse(id: string, type: string): Gig|null {
+    let inUse = null;
+    this.cache.gigs.forEach(gig => {
+      if (type == 'artists' && gig.artists.includes(id)) {
+        inUse = gig
+      }
+      if (type == 'promoters' && gig.promoters.includes(id)) {
+        inUse = gig
+      }
+      if (type == 'venues' && gig.venue == id) {
+        inUse = gig
+      }
+    })
+
+    return inUse;
+  }
+
+  signOut(): void {
+    this.authService.signOut();
   }
 
   private create(url: any): AnonymousSubject<MessageEvent> {

@@ -1,5 +1,5 @@
-import { Component, ViewChild, Inject, OnInit } from '@angular/core';
-import { Artist, Gig, Venue, Identifier, Message, WebsocketService } from "../websocket.service";
+import { Component, ViewChild, Inject, OnInit, HostListener } from '@angular/core';
+import { Contract, Gig, Venue, Identifier, Message, WebsocketService } from "../websocket.service";
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 import { FormControl } from '@angular/forms';
@@ -7,6 +7,7 @@ import { MAT_MOMENT_DATE_FORMATS, MomentDateAdapter } from '@angular/material-mo
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { UploadedFile } from '../upload-file/upload-file.component';
 import { environment } from '../../environments/environment';
+import { v4 as uuid } from 'uuid';
 
 // Depending on whether rollup is used, moment needs to be imported differently.
 // Since Moment.js doesn't have a default export, we normally need to import using the `* as`
@@ -18,6 +19,22 @@ import { default as _rollupMoment } from 'moment';
 
 export interface EditData {
   id: string;
+}
+
+
+function hash(str: string) {
+  if (!crypto.subtle) {
+    return Promise.resolve('fakesha')
+  }
+
+  const utf8 = new TextEncoder().encode(str);
+  return crypto.subtle.digest('SHA-256', utf8).then((hashBuffer) => {
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray
+      .map((bytes) => bytes.toString(16).padStart(2, '0'))
+      .join('');
+    return hashHex;
+  });
 }
 
 const moment = _rollupMoment || _moment;
@@ -62,14 +79,17 @@ export class EditgigComponent implements OnInit {
     ticketPrices: '',
     entourage: '',
     special: '',
+    contractText: '',
     urls: [],
     files: [],
+    promoters: [],
     artists: []
   }
   date = new FormControl(moment(this.gig.date));
   publicDate = new FormControl(moment(this.gig.publicDate));
   venue = new FormControl<string | Identifier>('');
   artists = new Set<Identifier>();
+  promoters = new Set<Identifier>();
   venues: Venue[] = []
   states: string[] = []
   hospitalityOpts: string[] = []
@@ -129,22 +149,69 @@ export class EditgigComponent implements OnInit {
       this.gig.artists.forEach((id: string) => {
         this.artists.add(this.WebsocketService.cache.artists.get(id)!)
       })
+      this.gig.promoters.forEach((id: string) => {
+        this.promoters.add(this.WebsocketService.cache.promoters.get(id)!)
+      })
       this.date.setValue(moment(this.gig.date))
       this.publicDate.setValue(moment(this.gig.publicDate))
+    }
+    if (this.gig.id == '') {
+      this.gig.id = uuid()
     }
 
     console.log("EDIT GIG", this.gig)
   }
 
   replaceInTemplate(str: string): string {
-    const artists = Array.from(this.artists).join(' / ')
+    const artists = Array.from(this.artists || []).map(a => a.name).join(' / ')
+    const promoters = Array.from(this.promoters || []).map(a => a.name).join(' / ')
+    console.log(this)
+    console.log(this.gig)
 
-    str = str.replaceAll('{{ name }}', this.gig.name);
-    str = str.replaceAll('{{ date }}', this.date.getRawValue()?.format("Y-MM-DD")!);
-    str = str.replaceAll('{{ openTime }}', this.gig.openTime);
-    str = str.replaceAll('{{ artists }}', artists);
-    str = str.replaceAll('{{ venue }}', this.WebsocketService.cache.venues.get(this.gig.venue)!.name);
+    str = str.replaceAll('#name#', this.gig.name);
+    str = str.replaceAll('#date#', this.date.getRawValue()?.format("Y-MM-DD")!);
+    str = str.replaceAll('#openTime#', this.gig.openTime);
+    str = str.replaceAll('#guarantee#', this.gig.guarantee);
+    str = str.replaceAll('#hospitality#', this.gig.hospitality);
+    str = str.replaceAll('#notes#', this.gig.notes);
+    str = str.replaceAll('#ticketPrices#', this.gig.ticketPrices);
+    str = str.replaceAll('#entourage#', this.gig.entourage);
+    str = str.replaceAll('#special#', this.gig.special);
+    str = str.replaceAll('#artists#', artists);
+    str = str.replaceAll('#promoters#', promoters);
+    str = str.replaceAll('#venue#', this.WebsocketService.cache.venues.get(this.gig.venue)!.name);
     return str
+  }
+
+  publishContract() {
+    const c: Contract = {
+      id: '',
+      gig: '',
+      name: '',
+      shasum: '',
+      text: '',
+      published: '',
+      signatures: []
+    }
+
+    c.name = this.gig.name;
+    c.gig = this.gig.id;
+    c.text = this.gig.contractText
+    hash(c.text).then((str: string) => {
+      const d = new Date()
+      c.shasum = str;
+      c.published = d.toISOString()
+      const m: Message = this.WebsocketService.emptyMessage('set')
+      m.data.contracts = [c]
+      this.WebsocketService.messages.next(m)
+    })
+  }
+
+  @HostListener('document:keydown.control.s', ['$event']) onKeydownHandler(event:
+    KeyboardEvent) {
+    console.log('Submitted');
+    event.preventDefault();
+    this.saveGig()
   }
 
   saveGig() {
@@ -160,17 +227,16 @@ export class EditgigComponent implements OnInit {
       this.gig.artists.push(val.id)
     })
 
+    this.gig.promoters.length = 0;
+    this.promoters.forEach((val: Identifier) => {
+      this.gig.promoters.push(val.id)
+    })
+
     this.gig.date = this.date.getRawValue()!.format("Y-MM-DD")
     this.gig.publicDate = this.publicDate.getRawValue()!.format("Y-MM-DD")
 
-    const m: Message = {
-      op: 'set',
-      data: {
-        artists: [] as Artist[],
-        venues: [] as Venue[],
-        gigs: [this.gig]
-      }
-    }
+    const m: Message = this.WebsocketService.emptyMessage('set')
+    m.data.gigs = [this.gig]
     this.WebsocketService.messages.next(m)
   }
 

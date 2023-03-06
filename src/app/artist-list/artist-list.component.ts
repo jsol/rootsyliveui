@@ -30,6 +30,16 @@ export class ArtistListComponent implements AfterViewInit {
     })
 
     _websocket.messages.subscribe((msg: Message) => {
+      if (msg.op == 'del' && msg.delete!.type == 'artists') {
+        const foundIndex = this.dataSource.data.findIndex(c => c.id == msg.delete!.id)
+        console.log("Deleting artist with id ", msg.delete!.id, foundIndex)
+        if (foundIndex >= 0) {
+          this.dataSource.data.splice(foundIndex, 1)
+          this.dataSource.data = this.dataSource.data
+        }
+
+      }
+
       if (msg.op == 'set') {
         msg.data.artists.forEach((g: Artist) => {
           const found = this.dataSource.data.find(c => c.id == g.id)

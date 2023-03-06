@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, AfterViewInit } from '@angular/core';
 import { WebsocketService, Message } from '../websocket.service';
 
 @Component({
@@ -6,7 +6,7 @@ import { WebsocketService, Message } from '../websocket.service';
   templateUrl: './add-option.component.html',
   styleUrls: ['./add-option.component.css']
 })
-export class AddOptionComponent {
+export class AddOptionComponent implements AfterViewInit{
 
   value:string = '';
   category:string = ''
@@ -16,7 +16,7 @@ export class AddOptionComponent {
     this.WebsocketService = WebsocketService
   }
 
-  ngOnInit() {
+  ngAfterViewInit() {
     this.categories = Object.keys(this.WebsocketService.settings.options)
   }
 
@@ -29,18 +29,7 @@ export class AddOptionComponent {
     if (index >= 0) {
       return
     }
-    const m: Message = {
-      op: 'set',
-      data: {
-        artists: [],
-        venues: [],
-        gigs: []
-      },
-      settings: {
-        options: {},
-        templates: {}
-      }
-    }
+    const m: Message = this.WebsocketService.emptyMessage('set')
     this.WebsocketService.settings.options[this.category].push(this.value)
 
     m.settings!.options[this.category] = this.WebsocketService.settings.options[this.category]

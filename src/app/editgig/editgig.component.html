@@ -27,6 +27,12 @@
             <app-multidrop type="artists" [selected]="artists"></app-multidrop>
         </div>
 
+        <div>
+            <h2>Promoter</h2>
+            <app-multidrop type="promoters" [selected]="promoters"></app-multidrop>
+        </div>
+
+
         <h2>Venue</h2>
         <div>
             <mat-form-field appearance="fill">
@@ -39,13 +45,13 @@
 
         <h2>Ticket prices</h2>
         <div>
-            <app-templated-text name="ticketPrices" type="gig.ticketPrices" [(value)]="gig.ticketPrices" [replace]="replaceInTemplate"
+            <app-templated-text name="ticketPrices" type="gig.ticketPrices" [(value)]="gig.ticketPrices" [replace]="replaceInTemplate.bind(this)"
                 class="example-full-width"></app-templated-text>
         </div>
 
         <h2>Guarantee</h2>
         <div>
-            <app-templated-text name="guarantee" type="gig.guarantee" [(value)]="gig.guarantee" [replace]="replaceInTemplate"
+            <app-templated-text name="guarantee" type="gig.guarantee" [(value)]="gig.guarantee" [replace]="replaceInTemplate.bind(this)"
                 class="example-full-width"></app-templated-text>
         </div>
 
@@ -61,21 +67,32 @@
 
         <h2>Entourage</h2>
         <div>
-            <app-templated-text name="entourage" type="gig.entourage" [(value)]="gig.entourage" [replace]="replaceInTemplate"
+            <app-templated-text name="entourage" type="gig.entourage" [(value)]="gig.entourage" [replace]="replaceInTemplate.bind(this)"
                 class="example-full-width"></app-templated-text>
         </div>
 
         <h2>Special Arrangements</h2>
         <div>
-            <app-templated-text name="special" type="gig.special" [(value)]="gig.special" [replace]="replaceInTemplate"
+            <app-templated-text name="special" type="gig.special" [(value)]="gig.special" [replace]="replaceInTemplate.bind(this)"
                 class="example-full-width"></app-templated-text>
         </div>
 
         <h2>Notes</h2>
         <div>
-            <app-templated-text name="notes" type="gig.notes" [(value)]="gig.notes" [replace]="replaceInTemplate"
+            <app-templated-text name="notes" type="gig.notes" [(value)]="gig.notes" [replace]="replaceInTemplate.bind(this)"
                 class="example-full-width"></app-templated-text>
         </div>
+
+
+        <h2>Contract</h2>
+        <div>
+            <app-templated-text name="contractText" type="gig.contractText" [(value)]="gig.contractText" [replace]="replaceInTemplate.bind(this)"
+                class="example-full-width"></app-templated-text>
+                <button mat-mini-fab (click)="publishContract()" color="primary" aria-label="Example icon button with a menu icon">
+                    <mat-icon>publish</mat-icon>
+                  </button>
+        </div>
+
 
         <h2>Upload file</h2>
         <ul>

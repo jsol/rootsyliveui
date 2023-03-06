@@ -37,6 +37,27 @@ import { SettingsComponent } from './settings/settings.component';
 import { OptionsListComponent } from './options-list/options-list.component';
 import { AddOptionDialogComponent } from './add-option-dialog/add-option-dialog.component';
 import { AddOptionComponent } from './add-option/add-option.component';
+import { SocialLoginModule, SocialAuthServiceConfig } from '@abacritt/angularx-social-login';
+import { GoogleLoginProvider, GoogleInitOptions } from '@abacritt/angularx-social-login';
+import { TemplateListComponent } from './template-list/template-list.component';
+import { EditTemplateComponent } from './edit-template/edit-template.component';
+import { EditTemplateDialogComponent } from './edit-template-dialog/edit-template-dialog.component';
+import { PromoterListComponent } from './promoter-list/promoter-list.component';
+import { EditPromoterComponent } from './edit-promoter/edit-promoter.component';
+import { EditPromoterDialogComponent } from './edit-promoter-dialog/edit-promoter-dialog.component';
+import { MarkdownModule } from 'ngx-markdown';
+import { ShowPromoterComponent } from './show-promoter/show-promoter.component';
+import { ContractListComponent } from './contract-list/contract-list.component';
+import { DeleteButtonComponent } from './delete-button/delete-button.component';
+import { DeleteButtonDialogComponent } from './delete-button-dialog/delete-button-dialog.component';
+
+const googleLoginOptions: GoogleInitOptions = {
+  scopes: [
+    'https://www.googleapis.com/auth/userinfo.email',
+    'https://www.googleapis.com/auth/userinfo.profile',
+    'openid',
+  ]
+};
 
 @NgModule({
   declarations: [
@@ -58,7 +79,17 @@ import { AddOptionComponent } from './add-option/add-option.component';
     SettingsComponent,
     OptionsListComponent,
     AddOptionDialogComponent,
-    AddOptionComponent
+    AddOptionComponent,
+    TemplateListComponent,
+    EditTemplateComponent,
+    EditTemplateDialogComponent,
+    PromoterListComponent,
+    EditPromoterComponent,
+    EditPromoterDialogComponent,
+    ShowPromoterComponent,
+    ContractListComponent,
+    DeleteButtonComponent,
+    DeleteButtonDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -78,9 +109,27 @@ import { AddOptionComponent } from './add-option/add-option.component';
     MatDialogModule,
     MatTabsModule,
     HttpClientModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    SocialLoginModule,
+    MarkdownModule.forRoot()
   ],
-  providers: [WebsocketService],
+  providers: [WebsocketService, {
+    provide: 'SocialAuthServiceConfig',
+    useValue: {
+      autoLogin: false,
+      providers: [
+        {
+          id: GoogleLoginProvider.PROVIDER_ID,
+          provider: new GoogleLoginProvider(
+            '1039428997368-jvk0rvjghohhu5i83buhaf2g46nac9v8.apps.googleusercontent.com', googleLoginOptions
+          )
+        }
+      ],
+      onError: (err) => {
+        console.error(err);
+      }
+    } as SocialAuthServiceConfig,
+  }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

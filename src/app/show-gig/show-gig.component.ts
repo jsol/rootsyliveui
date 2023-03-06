@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Artist, Gig, Venue, Identifier, Message, WebsocketService } from "../websocket.service";
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-show-gig',
@@ -11,10 +12,11 @@ export class ShowGigComponent {
   @Input() id: string = '';
   gig?:Gig;
   artists:string = ''
+  downloadBase = environment.baseUrl + '/download-file/'
 
   constructor(private WebsocketService: WebsocketService) {
-    this.WebsocketService = WebsocketService
 
+    this.WebsocketService = WebsocketService
   }
 
   ngOnInit() {

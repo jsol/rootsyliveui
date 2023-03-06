@@ -59,18 +59,7 @@ export class OptionsListComponent implements AfterViewInit, OnInit {
       this.dataSource.data.splice(index, 1)
       this.dataSource.data = this.dataSource.data;
     }
-    const m: Message = {
-      op: 'del',
-      data: {
-        artists: [],
-        venues: [],
-        gigs: []
-      },
-      settings: {
-        options: {},
-        templates: {}
-      }
-    }
+    const m: Message = this.websocket.emptyMessage('del')
     m.settings!.options[opt.type] = [opt.name]
     this.websocket.messages.next(m)
   }

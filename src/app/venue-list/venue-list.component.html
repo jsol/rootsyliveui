@@ -19,6 +19,7 @@
         </th>
         <td mat-cell *matCellDef="let element">
             <app-edit-venue-dialog [id]="element.id" type="edit"></app-edit-venue-dialog>
+            <app-delete-button [id]="element.id" [name]="element.name" type="venues"></app-delete-button>
         </td>
     </ng-container>
 
